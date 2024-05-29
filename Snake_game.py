@@ -1,21 +1,21 @@
 import os
 import time
 import random
-
+import msvcrt
 # Setările inițiale ale jocului
-width, height = 40, 20
-snake = [(5, 5)]
+width, height = 40, 20 #dimensiuni matrice, 40 coloane si 20 linii
+snake = [(5, 5)] #lista de tuple, reprezentand coordonatele (y,x)
 direction = (0, 1)  # Inițial șarpele merge spre dreapta
-food = (random.randint(1, height - 2), random.randint(1, width - 2))
+food = (random.randint(1, height - 2), random.randint(1, width - 2)) #mancarea este aleasa aleator in matrice, evitand marginile
 score = 0
 
 def print_board():
     os.system('cls')  # Curăță ecranul
-    for i in range(height):
-        for j in range(width):
-            if (i, j) == food:
+    for y in range(height):
+        for x in range(width):
+            if (y, x) == food:
                 print('*', end='')
-            elif (i, j) in snake:
+            elif (y, x) in snake:
                 print('#', end='')
             else:
                 print(' ', end='')
@@ -49,23 +49,17 @@ def change_direction(new_direction):
         direction = new_direction
 
 def get_key():
-       # Citirea comenzilor de la utilizator
-    try:
-        import msvcrt  # Pentru Windows
-        if msvcrt.kbhit():
-            key = msvcrt.getch().decode('utf-8').lower()
-    except ImportError:
-        import sys, termios, tty  # Pentru Unix
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
+    
+    # Citirea comenzilor de la utilizator
+    if msvcrt.kbhit():
+        key = msvcrt.getch()
         try:
-            tty.setraw(fd)
-            key = sys.stdin.read(1).lower()
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return key.decode('utf-8').lower()
+        except UnicodeDecodeError:
+            return None
     return None
 
-# Bucla principală a jocului
+
 while True:
     print_board()
     time.sleep(0.1)
